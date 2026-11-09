@@ -1,0 +1,249 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Riftwin Spellbook</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Figtree:wght@400;600;700&display=swap">
+<style>
+/* Layout: one reading column of cel-shaded panels, with the element grid as the centrepiece. */
+:root {
+  color-scheme: dark;
+  --bg: #1b1e3f; --panel: #272b58; --panel2: #323768; --ink: #0c0e24;
+  --fg: #f4f2ff; --muted: #b6b8dc; --accent: #ffd24a;
+  --up3: #ff8a4c; --up2: #d9a13f; --up1: #7f7fb8; --neg: #39b6c9;
+  --display: "Lilita One", "Trebuchet MS", sans-serif;
+  --body: "Figtree", system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font: 16px/1.5 var(--body); }
+.wrap { max-width: 1040px; margin: 0 auto; padding-block: 28px 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 40px; }
+.wrap > * { min-width: 0; }
+h1, h2, h3 { font-family: var(--display); font-weight: 400; margin: 0; text-wrap: balance; letter-spacing: .01em; }
+h1 { font-size: clamp(2.4rem, 7vw, 3.8rem); line-height: 1; color: var(--accent); text-shadow: 3px 3px 0 var(--ink); }
+h2 { font-size: 1.8rem; }
+h3 { font-size: 1.25rem; }
+p { margin: 0; max-width: 68ch; }
+.muted { color: var(--muted); }
+section, header { display: grid; gap: 14px; }
+section > *, header > * { min-width: 0; }
+nav { display: flex; flex-wrap: wrap; gap: 8px 18px; font-weight: 700; }
+nav a { color: var(--fg); }
+a:focus-visible, button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.panel { background: var(--panel); border: 3px solid var(--ink); border-radius: 14px; box-shadow: 4px 4px 0 var(--ink); padding: 16px; }
+.controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+.ctl b { display: block; color: var(--accent); font-size: .92rem; }
+.ctl span { font-size: .93rem; }
+.rules { display: grid; gap: 8px; padding-left: 20px; margin: 0; max-width: 72ch; }
+.marks { display: flex; flex-wrap: wrap; gap: 8px; }
+.mark { background: var(--panel2); border-radius: 8px; padding: 6px 10px; font-size: .9rem; }
+.mark b { color: var(--c); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font: 700 .9rem var(--body); color: var(--fg); background: var(--panel); border: 2px solid var(--ink); border-radius: 999px; padding: 6px 12px; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--c, var(--accent)); color: var(--ink); }
+.book { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: 16px; }
+.book > * { min-width: 0; }
+.el h3 { color: var(--c); margin-bottom: 8px; }
+.spell { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 2px 10px; padding-block: 9px; border-top: 2px solid var(--panel2); }
+.slot { font-size: .76rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); padding-top: 3px; }
+.spell strong { font-size: 1.02rem; }
+.spell .d { font-size: .93rem; }
+.stats { font-size: .8rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.gridbox { display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 340px); gap: 18px; align-items: start; }
+.gridbox > * { min-width: 0; }
+@media (max-width: 800px) { .gridbox { grid-template-columns: minmax(0, 1fr); } }
+.grid { display: grid; grid-template-columns: repeat(11, minmax(0, 1fr)); gap: 3px; }
+.hd { display: flex; align-items: center; justify-content: center; font: 700 clamp(.62rem, 1.7vw, .82rem) var(--body); color: var(--ink); background: var(--c); border-radius: 5px; aspect-ratio: 1; }
+.corner { background: none; }
+.cell { aspect-ratio: 1; border: 0; border-radius: 5px; padding: 0; font: 700 clamp(.56rem, 1.5vw, .78rem) var(--body); font-variant-numeric: tabular-nums; cursor: pointer; color: var(--ink); }
+.cell.t3 { background: var(--up3); } .cell.t2 { background: var(--up2); } .cell.t1 { background: var(--up1); color: var(--fg); } .cell.t0 { background: var(--neg); }
+.cell.same { background: var(--panel); cursor: default; }
+.cell[aria-pressed="true"] { outline: 3px solid var(--fg); outline-offset: 1px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: .86rem; color: var(--muted); }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+.detail { display: grid; gap: 10px; }
+.detail .pair { font-weight: 700; font-size: .9rem; }
+.detail h3 { font-size: 1.6rem; color: var(--accent); }
+.kv { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 3px 12px; font-size: .94rem; margin: 0; }
+.kv dt { color: var(--muted); } .kv dd { margin: 0; font-variant-numeric: tabular-nums; }
+.fusion { background: var(--panel2); border-radius: 10px; padding: 10px 12px; display: grid; gap: 4px; }
+.fusion b { font-family: var(--display); font-weight: 400; font-size: 1.2rem; }
+.fusion small { font-size: .88rem; color: var(--muted); }
+.tw { overflow-x: auto; border: 3px solid var(--ink); border-radius: 14px; box-shadow: 4px 4px 0 var(--ink); background: var(--panel); }
+table { border-collapse: collapse; font-size: .84rem; width: 100%; min-width: 1120px; }
+th, td { padding: 7px 8px; border: 1px solid var(--panel2); vertical-align: top; text-align: left; }
+thead th { color: var(--c); font-size: .84rem; }
+tbody th { position: sticky; left: 0; background: var(--panel); min-width: 118px; font-weight: 700; }
+thead th:first-child { position: sticky; left: 0; background: var(--panel); }
+td.sp { background: var(--panel2); } td.none { color: var(--muted); }
+.new { display: inline-block; background: var(--accent); color: var(--ink); font-size: .66rem; font-weight: 700; border-radius: 4px; padding: 0 4px; margin-right: 3px; }
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 16px; }
+.two > * { min-width: 0; }
+.list { margin: 8px 0 0; padding: 0; list-style: none; display: grid; gap: 7px; font-size: .94rem; }
+.list b { color: var(--accent); }
+</style>
+<div class="wrap">
+<header>
+  <h1>Riftwin Spellbook</h1>
+  <p>All 40 spells, all 45 element pairs and how they collide. Numbers and names come straight from the game's current data.</p>
+  <nav><a href="#basics">How it works</a><a href="#spells">Spells</a><a href="#grid">Element grid</a><a href="#objects">Spell objects</a></nav>
+</header>
+
+<section id="basics">
+  <h2>How it works</h2>
+  <div class="panel controls">
+    <div class="ctl"><b>Left or right click, tap</b><span>That hand's quick shot</span></div>
+    <div class="ctl"><b>Left or right click, hold</b><span>That hand's big spell</span></div>
+    <div class="ctl"><b>Q or E, tap</b><span>Hand action on yourself</span></div>
+    <div class="ctl"><b>Q or E, hold</b><span>Hand action on a target</span></div>
+    <div class="ctl"><b>Hold both clicks</b><span>Fusion ultimate. Needs two different gems, 72 mana, 20 s cooldown</span></div>
+  </div>
+  <p>Spells meet in four ways. Each one is covered below.</p>
+  <ol class="rules">
+    <li><b>On a player.</b> A hit leaves that element's mark for about 4.5 s. A different element landing on a marked player sets off that pair's reaction.</li>
+    <li><b>In the air.</b> Two projectiles that collide resolve through the same pair reaction.</li>
+    <li><b>On the ground.</b> A spell landing on a puddle, flames, ice, gas or acid reacts with it. Every pair has at least a generic reaction.</li>
+    <li><b>On a spell object.</b> Walls, waves, cyclones and wells each have their own reactions.</li>
+  </ol>
+  <h3>Mark rules</h3>
+  <ul class="rules">
+    <li>Damage becomes hit × multiplier + bonus, and a burst splashes around the target.</li>
+    <li>One hit can set off up to 3 reactions if the target carries several marks. The strongest goes first.</li>
+    <li>Reactions use up the old mark. Only Burning and Chilled stack, up to 5 each.</li>
+    <li>Six pairs cancel instead of amplify, shown in teal on the grid. Five of them also stop the new mark from landing. Renewal lets it land.</li>
+  </ul>
+  <div class="marks" id="marks"></div>
+</section>
+
+<section id="spells">
+  <h2>The 40 spells</h2>
+  <div class="chips" id="filter"></div>
+  <div class="book" id="book"></div>
+</section>
+
+<section id="grid">
+  <h2>Element grid</h2>
+  <p class="muted">Pick any square to see that pair's reaction and fusion ultimate. The order doesn't matter, so both halves of the grid match. Numbers are the damage multiplier.</p>
+  <div class="gridbox">
+    <div style="display:grid;gap:10px">
+      <div class="grid" id="matrix"></div>
+      <div class="legend">
+        <span><i style="background:var(--up3)"></i>Big, 1.45× and up</span>
+        <span><i style="background:var(--up2)"></i>Strong, 1.30× to 1.44×</span>
+        <span><i style="background:var(--up1)"></i>Mild, under 1.30×</span>
+        <span><i style="background:var(--neg)"></i>Cancels</span>
+      </div>
+    </div>
+    <div class="panel detail" id="detail" aria-live="polite"></div>
+  </div>
+</section>
+
+<section id="objects">
+  <h2>Spell objects</h2>
+  <p class="muted">Read across: what each incoming element does to the thing already in the world. Shaded cells are custom reactions. Plain cells are generic or minor. Blank means nothing happens, on purpose. <span class="new">NEW</span> marks the interactions added in the last pass, which haven't had a hands-on playtest yet.</p>
+  <div class="tw"><table id="objtable"></table></div>
+  <p class="muted">Ice, fire and earth surfaces and walls use the generic reaction for every pair: burning walls, shrapnel, bursts.</p>
+  <div class="two">
+    <div class="panel"><h3>Q and E objects</h3><ul class="list" id="qe"></ul></div>
+    <div class="panel"><h3>Left alone on purpose</h3><ul class="list" id="left"></ul></div>
+  </div>
+</section>
+</div>
+<script>
+const DATA = {"pairs": [{"a": "Fire", "b": "Frost", "name": "Thermal Shock", "mult": 1.5, "bonus": 18.0, "burst": 3.2, "consumes": null, "negates": null, "fusion": "Zero Sun", "authored": true, "fusionDamage": 97, "fusionRadius": 8.0}, {"a": "Fire", "b": "Lightning", "name": "Plasma Arc", "mult": 1.35, "bonus": 10.0, "burst": 2.8, "consumes": null, "negates": null, "fusion": "Thunderstar", "authored": true, "fusionDamage": 98, "fusionRadius": 7.6}, {"a": "Fire", "b": "Toxic", "name": "Combustion", "mult": 1.45, "bonus": 14.0, "burst": 3.4, "consumes": null, "negates": null, "fusion": "Virulent Inferno", "authored": true, "fusionDamage": 91, "fusionRadius": 8.0}, {"a": "Fire", "b": "Wind", "name": "Firestorm", "mult": 1.3, "bonus": 8.0, "burst": 3.0, "consumes": null, "negates": null, "fusion": "Phoenix Vortex", "authored": true, "fusionDamage": 91, "fusionRadius": 8.2}, {"a": "Fire", "b": "Earth", "name": "Molten Fault", "mult": 1.25, "bonus": 12.0, "burst": 2.8, "consumes": null, "negates": null, "fusion": "Molten Fault Cataclysm", "authored": false, "fusionDamage": 113, "fusionRadius": 7.8}, {"a": "Fire", "b": "Light", "name": "Purifying Flame", "mult": 1.15, "bonus": 8.0, "burst": 2.4, "consumes": null, "negates": null, "fusion": "Solar Crucible", "authored": true, "fusionDamage": 93, "fusionRadius": 7.6}, {"a": "Fire", "b": "Dark", "name": "Hellfire", "mult": 1.35, "bonus": 12.0, "burst": 3.0, "consumes": null, "negates": null, "fusion": "Infernal Eclipse", "authored": true, "fusionDamage": 102, "fusionRadius": 8.0}, {"a": "Fire", "b": "Water", "name": "Doused", "mult": 0.35, "bonus": 0.0, "burst": 2.0, "consumes": true, "negates": true, "fusion": "Scalding Deluge", "authored": true, "fusionDamage": 81, "fusionRadius": 8.2}, {"a": "Fire", "b": "Metal", "name": "Forge", "mult": 1.25, "bonus": 10.0, "burst": 2.6, "consumes": null, "negates": null, "fusion": "Worldforge", "authored": true, "fusionDamage": 104, "fusionRadius": 7.8}, {"a": "Frost", "b": "Lightning", "name": "Superconductor", "mult": 1.4, "bonus": 12.0, "burst": 3.0, "consumes": null, "negates": null, "fusion": "Polar Tempest", "authored": true, "fusionDamage": 82, "fusionRadius": 8.0}, {"a": "Frost", "b": "Toxic", "name": "Cryotoxin", "mult": 1.3, "bonus": 9.0, "burst": 2.7, "consumes": null, "negates": null, "fusion": "Pale Plague", "authored": true, "fusionDamage": 68, "fusionRadius": 8.0}, {"a": "Frost", "b": "Wind", "name": "Whiteout", "mult": 1.2, "bonus": 7.0, "burst": 3.0, "consumes": null, "negates": null, "fusion": "Endless Whiteout", "authored": true, "fusionDamage": 72, "fusionRadius": 8.2}, {"a": "Frost", "b": "Earth", "name": "Permafrost", "mult": 1.25, "bonus": 9.0, "burst": 2.8, "consumes": null, "negates": null, "fusion": "Glacial Fault", "authored": true, "fusionDamage": 92, "fusionRadius": 8.0}, {"a": "Frost", "b": "Light", "name": "Refraction", "mult": 1.15, "bonus": 6.0, "burst": 2.4, "consumes": null, "negates": null, "fusion": "Aurora Crown", "authored": true, "fusionDamage": 73, "fusionRadius": 8.0}, {"a": "Frost", "b": "Dark", "name": "Black Ice", "mult": 1.35, "bonus": 11.0, "burst": 2.8, "consumes": null, "negates": null, "fusion": "Night Glacier", "authored": true, "fusionDamage": 83, "fusionRadius": 8.0}, {"a": "Frost", "b": "Water", "name": "Flash Freeze", "mult": 1.45, "bonus": 12.0, "burst": 3.2, "consumes": null, "negates": null, "fusion": "Frozen Ocean", "authored": true, "fusionDamage": 75, "fusionRadius": 8.2}, {"a": "Frost", "b": "Metal", "name": "Brittle", "mult": 1.5, "bonus": 14.0, "burst": 2.8, "consumes": null, "negates": null, "fusion": "Shattersteel", "authored": true, "fusionDamage": 90, "fusionRadius": 8.0}, {"a": "Lightning", "b": "Toxic", "name": "Ionize", "mult": 1.3, "bonus": 10.0, "burst": 2.8, "consumes": null, "negates": null, "fusion": "Plague Circuit", "authored": true, "fusionDamage": 78, "fusionRadius": 8.0}, {"a": "Lightning", "b": "Wind", "name": "Thunderstorm", "mult": 1.35, "bonus": 10.0, "burst": 3.2, "consumes": null, "negates": null, "fusion": "Thunderstorm Cataclysm", "authored": false, "fusionDamage": 84, "fusionRadius": 8.2}, {"a": "Lightning", "b": "Earth", "name": "Grounded", "mult": 0.25, "bonus": 0.0, "burst": 2.0, "consumes": true, "negates": true, "fusion": "Seismic Dynamo", "authored": true, "fusionDamage": 92, "fusionRadius": 7.8}, {"a": "Lightning", "b": "Light", "name": "Prism Bolt", "mult": 1.2, "bonus": 7.0, "burst": 2.6, "consumes": null, "negates": null, "fusion": "Radiant Storm", "authored": true, "fusionDamage": 83, "fusionRadius": 7.6}, {"a": "Lightning", "b": "Dark", "name": "Blackout", "mult": 1.3, "bonus": 10.0, "burst": 2.8, "consumes": null, "negates": null, "fusion": "Midnight Thunder", "authored": true, "fusionDamage": 91, "fusionRadius": 8.0}, {"a": "Lightning", "b": "Water", "name": "Conductive Field", "mult": 1.5, "bonus": 15.0, "burst": 3.5, "consumes": null, "negates": null, "fusion": "Conductive Field Cataclysm", "authored": false, "fusionDamage": 87, "fusionRadius": 8.2}, {"a": "Lightning", "b": "Metal", "name": "Conduction", "mult": 1.6, "bonus": 16.0, "burst": 3.6, "consumes": null, "negates": null, "fusion": "Iron Thunder", "authored": true, "fusionDamage": 101, "fusionRadius": 7.8}, {"a": "Toxic", "b": "Wind", "name": "Miasma", "mult": 1.25, "bonus": 8.0, "burst": 3.4, "consumes": null, "negates": null, "fusion": "Viridian Typhoon", "authored": true, "fusionDamage": 71, "fusionRadius": 8.2}, {"a": "Toxic", "b": "Earth", "name": "Blight", "mult": 1.35, "bonus": 10.0, "burst": 3.0, "consumes": null, "negates": null, "fusion": "Worldrot", "authored": true, "fusionDamage": 91, "fusionRadius": 8.0}, {"a": "Toxic", "b": "Light", "name": "Cleansed", "mult": 0.1, "bonus": 0.0, "burst": 2.5, "consumes": true, "negates": true, "fusion": "Apotheosis", "authored": true, "fusionDamage": 65, "fusionRadius": 8.0}, {"a": "Toxic", "b": "Dark", "name": "Corruption", "mult": 1.45, "bonus": 13.0, "burst": 3.2, "consumes": null, "negates": null, "fusion": "Abyssal Plague", "authored": true, "fusionDamage": 83, "fusionRadius": 8.0}, {"a": "Toxic", "b": "Water", "name": "Contamination", "mult": 1.3, "bonus": 9.0, "burst": 3.2, "consumes": null, "negates": null, "fusion": "Toxic Tide", "authored": true, "fusionDamage": 70, "fusionRadius": 8.2}, {"a": "Toxic", "b": "Metal", "name": "Corrosion", "mult": 1.4, "bonus": 12.0, "burst": 2.8, "consumes": null, "negates": null, "fusion": "Rustfall", "authored": true, "fusionDamage": 86, "fusionRadius": 8.0}, {"a": "Wind", "b": "Earth", "name": "Sandstorm", "mult": 1.25, "bonus": 8.0, "burst": 3.4, "consumes": null, "negates": null, "fusion": "World Scour", "authored": true, "fusionDamage": 94, "fusionRadius": 8.2}, {"a": "Wind", "b": "Light", "name": "Mirage", "mult": 1.15, "bonus": 6.0, "burst": 2.8, "consumes": null, "negates": null, "fusion": "Seraphic Cyclone", "authored": true, "fusionDamage": 76, "fusionRadius": 8.2}, {"a": "Wind", "b": "Dark", "name": "Vacuum", "mult": 1.3, "bonus": 10.0, "burst": 3.0, "consumes": null, "negates": null, "fusion": "Void Tempest", "authored": true, "fusionDamage": 86, "fusionRadius": 8.2}, {"a": "Wind", "b": "Water", "name": "Waterspout", "mult": 1.35, "bonus": 11.0, "burst": 3.6, "consumes": null, "negates": null, "fusion": "Ocean Pillar", "authored": true, "fusionDamage": 78, "fusionRadius": 8.2}, {"a": "Wind", "b": "Metal", "name": "Shrapnel", "mult": 1.4, "bonus": 12.0, "burst": 3.2, "consumes": null, "negates": null, "fusion": "Razor Tempest", "authored": true, "fusionDamage": 91, "fusionRadius": 8.2}, {"a": "Earth", "b": "Light", "name": "Sunstone", "mult": 1.2, "bonus": 8.0, "burst": 2.6, "consumes": null, "negates": null, "fusion": "Dawn Bastion", "authored": true, "fusionDamage": 96, "fusionRadius": 7.8}, {"a": "Earth", "b": "Dark", "name": "Gravebind", "mult": 1.35, "bonus": 11.0, "burst": 3.0, "consumes": null, "negates": null, "fusion": "Tomb of Night", "authored": true, "fusionDamage": 105, "fusionRadius": 8.0}, {"a": "Earth", "b": "Water", "name": "Mudslide", "mult": 1.3, "bonus": 9.0, "burst": 3.2, "consumes": null, "negates": null, "fusion": "Continental Surge", "authored": true, "fusionDamage": 94, "fusionRadius": 8.2}, {"a": "Earth", "b": "Metal", "name": "Fortified", "mult": 0.6, "bonus": 0.0, "burst": 2.0, "consumes": true, "negates": true, "fusion": "Adamant Citadel", "authored": true, "fusionDamage": 97, "fusionRadius": 7.8}, {"a": "Light", "b": "Dark", "name": "Eclipse", "mult": 1.5, "bonus": 15.0, "burst": 3.5, "consumes": null, "negates": null, "fusion": "Total Eclipse", "authored": true, "fusionDamage": 92, "fusionRadius": 8.0}, {"a": "Light", "b": "Water", "name": "Renewal", "mult": 0.65, "bonus": 0.0, "burst": 2.4, "consumes": true, "negates": false, "fusion": "Wellspring", "authored": true, "fusionDamage": 68, "fusionRadius": 8.2}, {"a": "Light", "b": "Metal", "name": "Mirror", "mult": 0.55, "bonus": 0.0, "burst": 2.2, "consumes": true, "negates": true, "fusion": "Celestial Aegis", "authored": true, "fusionDamage": 81, "fusionRadius": 7.8}, {"a": "Dark", "b": "Water", "name": "Abyss", "mult": 1.3, "bonus": 10.0, "burst": 3.2, "consumes": null, "negates": null, "fusion": "Drowned Void", "authored": true, "fusionDamage": 84, "fusionRadius": 8.2}, {"a": "Dark", "b": "Metal", "name": "Umbral Blade", "mult": 1.35, "bonus": 11.0, "burst": 3.0, "consumes": null, "negates": null, "fusion": "Nightsteel Dominion", "authored": true, "fusionDamage": 97, "fusionRadius": 8.0}, {"a": "Water", "b": "Metal", "name": "Rust", "mult": 1.4, "bonus": 12.0, "burst": 3.0, "consumes": null, "negates": null, "fusion": "Iron Tide", "authored": true, "fusionDamage": 89, "fusionRadius": 8.2}], "objects": {"Flame Wall": ["✅ relights", "✅ steam bank", "🆕 plasma arcs", "✅ toxic green fire", "✅ blows out / fire cyclone", "✅ boulder plugs vent, catches fire", "—", "✅ dart → black flame", "✅ douse", "✅ disc red-hot"], "Glacier Glide path": ["✅ melts", "✅ reinforces", "✅ electrified bridge", "✅ frozen poison", "✅ chips", "✅ boulder smashes", "✅ prism splits in ice", "⚪ void well rips pieces", "✅ thickens", "✅ disc chops"], "Chain Storm (strike)": ["⚪", "⚪", "—", "⚪", "⚪", "⚪", "⚪", "⚪", "🆕 live water chain", "✅ lodestone / 🆕 anchor rod"], "Miasma cloud (smog)": ["✅ Toxic Ignition", "✅ freezes solid", "✅ Toxic Shock", "—", "✅ dispersed", "⚪", "✅ lit up, reveals", "✅ darkened, no reveal", "⚪ Contamination", "✅ disc corroded"], "Cyclone": ["✅ fire cyclone", "✅ frost cyclone", "✅ storm cyclone", "✅ toxic cyclone", "⚪", "✅ boulders orbit", "🆕 sun cyclone spray", "🆕 void cyclone", "✅ water cyclone", "✅ discs orbit, iron cyclone"], "Faultline spires": ["✅ molten line", "✅ ices", "✅ hops spire to spire", "✅ acid ooze", "✅ blasts", "✅ shatters", "⚪ surge", "⚪ surge", "✅ bursts out", "✅ shatters"], "Solar Lance": ["✅ heat strip", "✅ melts ice", "—", "✅ ignites smog", "—", "—", "—", "✅ snuffs darts, destabilises well", "✅ steam stops it", "✅ mirrors"], "Void Well": ["✅ eats & spits", "✅ eats", "✅ eats", "✅ eats smog", "✅ eats", "✅ rips boulders", "✅ destabilises", "—", "✅ drinks tsunami", "✅ anchors, lodestone tug-of-war"], "Tidal Surge": ["✅ steam, shrinks (🆕 ignites if toxic)", "✅ freezes", "✅ electrified", "🆕 contaminated", "✅ faster, spray", "✅ shrinks", "—", "⚪ void well drinks it", "✅ grows", "✅ shrinks / rolls the lodestone"], "Lodestone": ["✅ forge", "✅ ice-steel", "✅ electromagnet", "✅ corrodes", "✅ iron cyclone", "✅ wrecking ball", "✅ bends light", "✅ tug-of-war", "✅ rusts", "✅ pulls metal"], "Water puddle": ["✅ evaporates", "✅ flash freeze", "✅ live water chain", "⚪", "⚪", "⚪", "⚪", "✅ ink pool", "—", "✅ rust"], "Acid pool (Venom Glob)": ["✅", "✅ green ice", "✅ shocked acid", "—", "🆕 low acid mist, pool stays", "⚪", "⚪", "⚪", "⚪", "⚪"], "Steam cloud": ["—", "🆕 sleet", "✅ shocked", "—", "✅ blown", "—", "✅ blinding scatter", "—", "—", "—"], "Ink pool": ["—", "—", "✅ conducts", "—", "—", "—", "🆕 burned away", "—", "—", "—"], "Metal Anchor": ["✅ red-hot", "✅ brittle", "✅ lightning rod / fence", "✅ dissolves", "✅ cyclone rips out", "✅ studded boulder", "✅ mirror", "✅ void well eats", "✅ rusts", "—"], "Boulder in flight": ["✅ takes element", "✅", "✅", "✅", "✅", "—", "⚪", "⚪", "✅", "✅ studded"], "Ice / fire / earth surfaces & walls": ["generic catalog for every pair (burning walls, shrapnel, bursts)", "", "", "", "", "", "", "", "", ""]}, "spells": {"Fire/Primary": {"name": "Ember Lance", "desc": "Fast fire projectile applying stacking Burn.", "damage": 27.0, "mana": 12.0, "cd": 0.22, "radius": 1.55, "dur": 1.8, "count": 1}, "Fire/Secondary": {"name": "Flame Mantle", "desc": "Orbiting flames consume light projectiles.", "damage": 18.0, "mana": 24.0, "cd": 1.15, "radius": 1.8, "dur": 2.1, "count": 4}, "Fire/Sorcery": {"name": "Flame Wall", "desc": "Five vents erupt across the aim into a burning wall of fire.", "damage": 56.7, "mana": 32.0, "cd": 6.5, "radius": 3.4, "dur": 3.0, "count": 1}, "Fire/Ultimate": {"name": "Combustion Brand", "desc": "A damage-fed mark that detonates around its target.", "damage": 71.5, "mana": 65.0, "cd": 16.0, "radius": 5.2, "dur": 4.5, "count": 1}, "Frost/Primary": {"name": "Frost Needle", "desc": "High-velocity needle applying stacking Chill.", "damage": 17.0, "mana": 12.0, "cd": 0.22, "radius": 1.55, "dur": 1.8, "count": 1}, "Frost/Secondary": {"name": "Froststep", "desc": "A sliding burst leaving frozen ground.", "damage": 13.0, "mana": 24.0, "cd": 1.15, "radius": 1.8, "dur": 2.1, "count": 5}, "Frost/Sorcery": {"name": "Glacier Glide", "desc": "Hold to ride a frozen slide through the air for up to 10 seconds.", "damage": 35.7, "mana": 32.0, "cd": 6.5, "radius": 3.4, "dur": 3.2, "count": 1}, "Frost/Ultimate": {"name": "Crystal Prison", "desc": "Heavy slow that roots chilled targets.", "damage": 45.1, "mana": 65.0, "cd": 16.0, "radius": 5.6, "dur": 4.5, "count": 1}, "Lightning/Primary": {"name": "Arc Strike", "desc": "Near-instant bolt applying Conductive.", "damage": 22.0, "mana": 12.0, "cd": 0.22, "radius": 1.55, "dur": 1.8, "count": 1}, "Lightning/Secondary": {"name": "Volt Skip", "desc": "Short dash leaving an electrical trail.", "damage": 12.0, "mana": 24.0, "cd": 1.15, "radius": 1.8, "dur": 2.1, "count": 4}, "Lightning/Sorcery": {"name": "Chain Storm", "desc": "Charged discharge with Wet-enhanced chaining.", "damage": 46.2, "mana": 32.0, "cd": 6.5, "radius": 3.4, "dur": 2.8, "count": 1}, "Lightning/Ultimate": {"name": "Neural Surge", "desc": "Interrupts charging and releases an electrical pulse.", "damage": 58.3, "mana": 65.0, "cd": 16.0, "radius": 5.0, "dur": 4.5, "count": 1}, "Toxic/Primary": {"name": "Venom Glob", "desc": "Sticky poison glob leaving a corrosive puddle.", "damage": 16.0, "mana": 12.0, "cd": 0.22, "radius": 1.55, "dur": 1.8, "count": 1}, "Toxic/Secondary": {"name": "Caustic Shedding", "desc": "Cleanse and leave a toxic decoy.", "damage": 11.0, "mana": 24.0, "cd": 1.15, "radius": 1.8, "dur": 2.1, "count": 6}, "Toxic/Sorcery": {"name": "Miasma Cloud", "desc": "Expanding gas cloud that damages and weakens healing.", "damage": 33.6, "mana": 32.0, "cd": 6.5, "radius": 3.4, "dur": 3.8, "count": 1}, "Toxic/Ultimate": {"name": "Contagion", "desc": "Escalating infection that spreads between teammates.", "damage": 42.4, "mana": 65.0, "cd": 16.0, "radius": 5.6, "dur": 4.5, "count": 1}, "Wind/Primary": {"name": "Gust Shot", "desc": "Compressed air pushes enemies, objects, and light projectiles.", "damage": 19.0, "mana": 12.0, "cd": 0.22, "radius": 1.55, "dur": 1.8, "count": 1}, "Wind/Secondary": {"name": "Wind Repulse", "desc": "A personal 360-degree repulsion wave.", "damage": 10.0, "mana": 24.0, "cd": 1.15, "radius": 1.8, "dur": 2.1, "count": 5}, "Wind/Sorcery": {"name": "Cyclone", "desc": "A charged pulling, lifting, projectile-bending vortex.", "damage": 2.5, "mana": 32.0, "cd": 6.5, "radius": 3.4, "dur": 3.0, "count": 1}, "Wind/Ultimate": {"name": "Gale Anchor", "desc": "A protective radial burst around a soft target.", "damage": 50.4, "mana": 65.0, "cd": 16.0, "radius": 5.8, "dur": 4.5, "count": 1}, "Earth/Primary": {"name": "Stonebreaker", "desc": "Heavy jagged rock that briefly staggers.", "damage": 29.0, "mana": 12.0, "cd": 0.22, "radius": 1.55, "dur": 1.8, "count": 1}, "Earth/Secondary": {"name": "Stonehide", "desc": "Rock armor with knockback resistance.", "damage": 17.0, "mana": 24.0, "cd": 1.15, "radius": 1.8, "dur": 2.1, "count": 3}, "Earth/Sorcery": {"name": "Faultline", "desc": "A traveling line of damaging stone pillars.", "damage": 60.9, "mana": 32.0, "cd": 6.5, "radius": 3.4, "dur": 4.0, "count": 1}, "Earth/Ultimate": {"name": "Stone Shelter", "desc": "Three curved slabs form temporary cover around a target.", "damage": 76.9, "mana": 65.0, "cd": 16.0, "radius": 5.4, "dur": 4.5, "count": 1}, "Light/Primary": {"name": "Prism Bolt", "desc": "'Near-instant spear of light: reveals, bounces off steel, ice and still water, splits through ice.'", "damage": 20.0, "mana": 12.0, "cd": 0.22, "radius": 1.55, "dur": 1.8, "count": 1}, "Light/Secondary": {"name": "Radiant Veil", "desc": "A revealing personal light shield.", "damage": 12.0, "mana": 24.0, "cd": 1.15, "radius": 1.8, "dur": 2.1, "count": 5}, "Light/Sorcery": {"name": "Solar Lance", "desc": "'Channel a sweeping beam that ramps to white-hot and scorches the ground; bounces once, steam blocks it. Overheats after 4 s.'", "damage": 42.0, "mana": 32.0, "cd": 6.5, "radius": 3.4, "dur": 3.2, "count": 1}, "Light/Ultimate": {"name": "Prismatic Aegis", "desc": "An ally barrier that blocks and partially reflects a major hit.", "damage": 53.0, "mana": 65.0, "cd": 16.0, "radius": 5.2, "dur": 4.5, "count": 1}, "Dark/Primary": {"name": "Shade Dart", "desc": "'Homing ink dart: withers and Shadow-Marks (your next Dark hit pops it); turns water to ink, fire to black flame.'", "damage": 23.0, "mana": 12.0, "cd": 0.22, "radius": 1.55, "dur": 1.8, "count": 1}, "Dark/Secondary": {"name": "Shadow Slip", "desc": "Shadow dash leaving a decoy.", "damage": 14.0, "mana": 24.0, "cd": 1.15, "radius": 1.8, "dur": 2.1, "count": 4}, "Dark/Sorcery": {"name": "Void Well", "desc": "'Throw a black hole that swallows every spell that enters, then spits them back out as yours toward your crosshair.'", "damage": 3.0, "mana": 32.0, "cd": 6.5, "radius": 3.4, "dur": 3.6, "count": 1}, "Dark/Ultimate": {"name": "Shadowbind", "desc": "Restricts a target to a destructible shadow tether.", "damage": 61.0, "mana": 65.0, "cd": 16.0, "radius": 5.6, "dur": 4.5, "count": 1}, "Water/Primary": {"name": "Hydro Bolt", "desc": "Dense water bolt applies Wet and extinguishes Burn.", "damage": 18.0, "mana": 12.0, "cd": 0.22, "radius": 1.55, "dur": 1.8, "count": 1}, "Water/Secondary": {"name": "Restorative Current", "desc": "Self-heal over time that removes Burn.", "damage": 12.0, "mana": 24.0, "cd": 1.15, "radius": 1.8, "dur": 2.1, "count": 5}, "Water/Sorcery": {"name": "Tidal Surge", "desc": "A charged wall of water washes enemies backward.", "damage": 37.8, "mana": 32.0, "cd": 6.5, "radius": 3.4, "dur": 4.0, "count": 1}, "Water/Ultimate": {"name": "Healing Stream", "desc": "A visible stream heals a soft-targeted ally.", "damage": 47.7, "mana": 65.0, "cd": 16.0, "radius": 5.8, "dur": 4.5, "count": 1}, "Metal/Primary": {"name": "Razor Disc", "desc": "Spinning saw that ricochets toward enemies, then bites in as an anchor (lightning rod, mirror).", "damage": 25.0, "mana": 12.0, "cd": 0.22, "radius": 1.55, "dur": 1.8, "count": 1}, "Metal/Secondary": {"name": "Iron Orbit", "desc": "Orbiting fragments intercept projectiles.", "damage": 15.0, "mana": 24.0, "cd": 1.15, "radius": 1.8, "dur": 2.1, "count": 5}, "Metal/Sorcery": {"name": "Lodestone", "desc": "'Hurl a magnet core: it drags enemies and metal into a cutting junk ring, then flips and blasts it all out. Hold again to flip early.'", "damage": 52.5, "mana": 32.0, "cd": 6.5, "radius": 3.4, "dur": 3.5, "count": 1}, "Metal/Ultimate": {"name": "Magnetic Clamp", "desc": "Magnetizes a target to attract Metal attacks.", "damage": 66.2, "mana": 65.0, "cd": 16.0, "radius": 5.4, "dur": 4.5, "count": 1}}};
+const EL = ["Fire","Frost","Lightning","Toxic","Wind","Earth","Light","Dark","Water","Metal"];
+const AB = {Fire:"Fi",Frost:"Fr",Lightning:"Li",Toxic:"To",Wind:"Wi",Earth:"Ea",Light:"Lt",Dark:"Dk",Water:"Wa",Metal:"Me"};
+const COL = {Fire:"#ff7a3d",Frost:"#8fe0ff",Lightning:"#ffe04d",Toxic:"#9be03c",Wind:"#b7f0d4",Earth:"#d2a56c",Light:"#fff3b8",Dark:"#b58cf5",Water:"#62aeff",Metal:"#c2cbd9"};
+const MARK = {Fire:["Burning","damage over time, more per stack"],Frost:["Chilled","stacks, and sets up Crystal Prison"],Lightning:["Charged",""],Toxic:["Poisoned","damage over time"],Wind:["Aloft",""],Earth:["Rooted",""],Light:["Revealed","takes 8% more from other elements"],Dark:["Cursed","damage over time"],Water:["Soaked","Neural Surge lasts longer and jumps"],Metal:["Sundered","takes 12% more from other elements"]};
+const TRAIT = {Fire:"an extra blast and burning ground",Frost:"an ice surface",Lightning:"an extra shock blast",Toxic:"a poison field",Wind:"targets shoved out and a wind field",Earth:"a rock entombment",Light:"ally healing and mark cleanse",Dark:"targets dragged inward",Water:"ally healing and a push outward",Metal:"a metal ring"};
+const TEXT = {
+ Fire:["Fireball that explodes on impact and splashes stacking Burn.","Vents erupt in a line across your aim, forming a burning wall.","10 s of orbiting flames that burn anyone close and block 2 shots.","Brands a target for 16 s. Enough damage on them sets it off in a big detonation."],
+ Frost:["Fast needle that stacks Chill.","Hold to ride a frozen slide through the air for up to 10 s.","Slide leaving an ice lane. Enemies nearby are slowed to half for 3 s, and an ice crust blocks your next shot for 6 s.","Chilled target: encased and rooted for 4.4 s. Otherwise slowed hard for 8 s. Either way they can't jump or levitate."],
+ Lightning:["Near-instant bolt that leaves Charged.","Marks the ground, then a telegraphed strike falls from the sky.","Dash as a bolt, zapping anyone you pass and leaving a live trail.","Interrupts their spells for 1.4 s. On a Soaked target it's 2.2 s and jumps to the nearest other enemy."],
+ Toxic:["Lobbed glob that bursts into a bubbling acid pool.","Expanding gas cloud that damages and weakens healing.","Sheds Burn, Curse and Contagion, then dash away leaving a husk that bursts into acid and poison.","14 s infection that spreads between their teammates."],
+ Wind:["Pressure blast that shoves enemies hard and deflects light projectiles.","Pulling, lifting vortex that bends projectiles.","Blasts enemies away, then 6 s of wind around you turns incoming shots aside.","Enemy: launched high into the air, about 13 m. Ally: 7 s wind wall and knockback anchor."],
+ Earth:["Heavy arcing boulder with big splash and knockback.","A traveling line of damaging stone pillars.","Ground slam, then 12 s of craggy stone body with armor and knockback resistance.","Enemy: fully entombed in rock for 6 s. Ally: slabs of cover for 14 s."],
+ Light:["Near-instant spear. Reveals, bounces off steel, ice and still water, and splits through ice.","Channel a sweeping beam that ramps up. Bounces once, steam blocks it, overheats after 4 s.","12 s, two prism shards that each bounce a shot back at 55%, and a flash that reveals nearby enemies.","A prism dome for 14 s that sends one shot straight back at full damage."],
+ Dark:["Homing ink dart that withers and Shadow-Marks. Your next Dark hit pops it. Turns water to ink and fire to black flame.","Throw a black hole that swallows every spell entering it, then spits them back as yours.","Leave an ink decoy, dash off and stay concealed for 6 s.","Tethers a target to a shadow obelisk for 10 s. Break the obelisk or use Light to free them."],
+ Water:["Dense bolt that leaves Soaked and puts out Burn.","A charged wall of water that washes enemies backward.","Removes Burn, cures Contagion, heals you over 10 s and drops a team healing field.","Removes Burn, cures Contagion, and streams healing to an ally for 10 s."],
+ Metal:["Spinning saw that ricochets toward enemies, then bites in as an anchor. Works as a lightning rod and mirror.","Hurl a magnet core that drags enemies and metal into a cutting ring, then flips and blasts it all out. Hold again to flip early.","14 s, three discs that each block a shot and take on its element. They saw anyone close, then fly at an enemy.","Magnetizes a target for 14 s so Metal attacks home in on them. Also a 5 s slow."]
+};
+const SLOTS = [["Primary","Tap"],["Sorcery","Hold"],["Secondary","Q/E tap"],["Ultimate","Q/E hold"]];
+const $ = id => document.getElementById(id);
+const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+const fmt = n => (Math.round(n*10)/10).toString();
+
+$("marks").innerHTML = EL.map(e => `<div class="mark" style="--c:${COL[e]}"><b>${MARK[e][0]}</b>${MARK[e][1] ? " " + MARK[e][1] : ""}</div>`).join("");
+
+function renderBook(only) {
+  $("book").innerHTML = EL.filter(e => !only || e === only).map(e => {
+    const rows = SLOTS.map(([slot,label],i) => {
+      const s = DATA.spells[e + "/" + slot];
+      const numbers = i < 2 ? `<div class="stats">${Math.round(s.damage)} damage${e==="Wind"&&i===1||e==="Dark"&&i===1?" per pulse":""} · ${Math.round(s.mana)} mana · ${s.cd} s cooldown</div>` : "";
+      return `<div class="spell"><div class="slot">${label}</div><div><strong>${esc(s.name)}</strong><div class="d">${esc(TEXT[e][i])}</div>${numbers}</div></div>`;
+    }).join("");
+    return `<article class="panel el" style="--c:${COL[e]}"><h3>${e}</h3>${rows}</article>`;
+  }).join("");
+}
+function renderFilter(active) {
+  $("filter").innerHTML = ["All"].concat(EL).map(e => `<button type="button" class="chip" data-e="${e}" aria-pressed="${e===active}" style="${e==="All"?"":"--c:"+COL[e]}">${e}</button>`).join("");
+}
+$("filter").addEventListener("click", ev => {
+  const b = ev.target.closest("button"); if (!b) return;
+  renderFilter(b.dataset.e); renderBook(b.dataset.e === "All" ? null : b.dataset.e);
+});
+renderFilter("All"); renderBook(null);
+
+const key = (a,b) => EL.indexOf(a) < EL.indexOf(b) ? a+"|"+b : b+"|"+a;
+const PAIR = {}; DATA.pairs.forEach(p => PAIR[key(p.a,p.b)] = p);
+const isNeg = p => p.negates === true || p.mult < 0.75;
+const tier = p => isNeg(p) ? "t0" : p.mult >= 1.45 ? "t3" : p.mult >= 1.30 ? "t2" : "t1";
+let cur = key("Frost","Water");
+function renderMatrix() {
+  let h = `<div class="hd corner"></div>` + EL.map(e => `<div class="hd" style="--c:${COL[e]}" title="${e}">${AB[e]}</div>`).join("");
+  EL.forEach(r => {
+    h += `<div class="hd" style="--c:${COL[r]}" title="${r}">${AB[r]}</div>`;
+    EL.forEach(c => {
+      if (r === c) { h += `<div class="cell same" aria-hidden="true"></div>`; return; }
+      const p = PAIR[key(r,c)];
+      h += `<button type="button" class="cell ${tier(p)}" data-k="${key(r,c)}" aria-pressed="${key(r,c)===cur}" aria-label="${r} and ${c}: ${p.name}" title="${p.name}">${p.mult.toFixed(2).replace(/0$/,"")}</button>`;
+    });
+  });
+  $("matrix").innerHTML = h;
+}
+function renderDetail() {
+  const p = PAIR[cur], neg = isNeg(p);
+  const math = `hit × ${p.mult}` + (p.bonus ? ` + ${p.bonus}` : "");
+  const ex = fmt(20 * p.mult + p.bonus);
+  const effect = p.negates === true ? "Cancels. The new mark doesn't land and the old one is used up." : neg ? "Cancels part of the hit. The old mark is used up and the new one still lands." : "Amplifies the hit. The old mark is used up and the new one lands.";
+  $("detail").innerHTML = `<div class="pair"><span style="color:${COL[p.a]}">${p.a}</span> + <span style="color:${COL[p.b]}">${p.b}</span></div>
+  <h3>${esc(p.name)}</h3><p>${effect}</p>
+  <dl class="kv"><dt>Damage</dt><dd>${math}</dd><dt>A 20 hit becomes</dt><dd>${ex}</dd><dt>Burst radius</dt><dd>${p.burst} m</dd></dl>
+  <div class="fusion"><small>Fusion ultimate</small><b>${esc(p.fusion)}</b><span style="font-size:.93rem">${p.fusionDamage} damage · ${p.fusionRadius} m radius</span><small>Adds ${TRAIT[p.a]}, plus ${TRAIT[p.b]}.</small></div>`;
+}
+$("matrix").addEventListener("click", ev => {
+  const b = ev.target.closest("button[data-k]"); if (!b) return;
+  cur = b.dataset.k; renderMatrix(); renderDetail();
+  const again = $("matrix").querySelector(`button[data-k="${cur}"]`); if (again) again.focus();
+});
+renderMatrix(); renderDetail();
+
+function cell(raw) {
+  if (raw === "—" || raw === "") return `<td class="none"></td>`;
+  const sp = raw.startsWith("✅") || raw.startsWith("🆕");
+  let t = esc(raw).replace(/✅\s*/g,"").replace(/⚪\s*/g,"").replace(/🆕\s*/g,'<span class="new">NEW</span>').trim();
+  if (!t) t = sp ? "Reacts" : "Minor";
+  return `<td class="${sp ? "sp" : ""}">${t}</td>`;
+}
+let t = `<thead><tr><th>Object</th>` + EL.map(e => `<th style="--c:${COL[e]}">${e}</th>`).join("") + `</tr></thead><tbody>`;
+Object.entries(DATA.objects).forEach(([name, cells]) => {
+  if (name.startsWith("Ice /")) return;
+  t += `<tr><th scope="row">${esc(name)}</th>` + cells.map(cell).join("") + `</tr>`;
+});
+$("objtable").innerHTML = t + `</tbody>`;
+
+const QE = [["Flame Mantle, Radiant Veil, Iron Orbit, Prismatic Aegis","block shots. Iron Orbit discs take on the blocked element, and the Aegis reflects one."],["Stonehide plates","glow with whatever element hits them."],["Crystal Prison","Fire melts it. Earth or Metal shatters a full cage for bonus damage."],["Contagion","Fire sets off Fever Pop. Water cures it."],["Magnetic Clamp","takes on the elements that hit it. Lightning interrupts the target."],["Shadowbind obelisk","Light shatters it, and destroying it breaks the tether."],["Shadow decoy","Radiant Veil burns it, and an enemy shot bursts it."],["Caustic husk","a shot bursts it into its cloud. Fire then sets off Toxic Ignition, Lightning gives Toxic Shock."],["Gale Anchor wall","repels enemy shots and clears poison clouds."],["Volt Skip trail","water touching it goes live."],["Froststep lane","Fire melts it and Water freezes on it."]];
+$("qe").innerHTML = QE.map(([a,b]) => `<li><b>${esc(a)}:</b> ${esc(b)}</li>`).join("");
+const LEFT = [["Light or Dark into Tidal Surge","a healing or ink wave could be a future idea."],["Wind into Cyclone","could grow it or speed it up."],["Fire or Toxic into steam","steam stays steam."],["Light into Flame Wall","nothing obvious fits."],["Light or Dark into Faultline","uses the generic surge down the line."]];
+$("left").innerHTML = LEFT.map(([a,b]) => `<li><b>${esc(a)}:</b> ${esc(b)}</li>`).join("");
+</script>
+
+</body></html>
